@@ -21,11 +21,11 @@ end
 puts "Added ingredients!"
 
 # Import of 10 random drinks from 'thecocktaildb'
-puts "getting 10 drinks..."
+puts "getting 20 drinks..."
 
 drinks = []
 
-10.times do
+20.times do
   url_drink = 'http://www.thecocktaildb.com/api/json/v1/1/random.php'
   drink = open(url_drink).read
   drink_hash = JSON.parse(drink)
@@ -33,11 +33,12 @@ drinks = []
   # sample drink_name --> "Waikiki Beachcomber"
   drink_name = drink_hash['drinks'].first["strDrink"]
   # sample drink_ingredients --> ["Triple sec", "Gin", "Pineapple juice"]
-  drink_ingredients = drink_hash['drinks'].first.select { |k,v| k.match(/strIngredient/) && v != "" }.values
+  drink_ingredients = drink_hash['drinks'].first.select { |k,v| k.match(/strIngredient/) && v != ""}.values
   # sample drink_measures --> ["3/4 oz", "3/4 oz", "1 tblsp"]
-  drink_measures = drink_hash['drinks'].first.select { |k,v| k.match(/strMeasure/)}.first(drink_ingredients.size).map { |measure| measure.last.strip }
+  drink_measures = drink_hash['drinks'].first.select { |k,v| k.match(/strMeasure/)}.first(drink_ingredients.size).map { |measure| measure.last.nil? ? "" : measure.last.strip }
 
   drinks << { name: drink_name, doses: drink_ingredients.zip(drink_measures).map { |dose| { ingredient: dose.first, description: dose.last }} }
+  puts "Adding #{drink_name}"
 end
 
 puts "creating drinks and doses..."
